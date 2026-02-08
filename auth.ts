@@ -8,6 +8,7 @@ import User from "@/lib/models/User";
 import { connectDB } from "./lib/db";
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
+  secret: process.env.AUTH_SECRET || process.env.NEXTAUTH_SECRET,
   adapter: MongoDBAdapter(clientPromise),
   session: { strategy: "jwt" },
   pages: {
