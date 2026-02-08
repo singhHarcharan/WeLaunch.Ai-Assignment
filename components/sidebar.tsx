@@ -2,6 +2,8 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useRouter, useParams, useSearchParams } from "next/navigation";
+import { useEffect, useRef, useState } from "react";
+import { useRouter, useParams, useSearchParams } from "next/navigation";
 import { signOut, useSession } from "next-auth/react";
 import {
   Plus,
@@ -38,6 +40,7 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
   const router = useRouter();
   const params = useParams();
   const searchParams = useSearchParams();
+  const searchParams = useSearchParams();
   const { data: session } = useSession();
   const [workspaces, setWorkspaces] = useState<WorkspaceType[]>([]);
   const [activeWorkspace, setActiveWorkspace] = useState<WorkspaceType | null>(null);
@@ -46,6 +49,8 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
   const [showCreateWs, setShowCreateWs] = useState(false);
   const [editingChatId, setEditingChatId] = useState<string | null>(null);
   const [editTitle, setEditTitle] = useState("");
+  const [resolvedThreadId, setResolvedThreadId] = useState<string | null>(null);
+  const resolvingRef = useRef<string | null>(null);
   const [resolvedThreadId, setResolvedThreadId] = useState<string | null>(null);
   const resolvingRef = useRef<string | null>(null);
 
@@ -87,7 +92,7 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
           if (match) {
             if (!cancelled) {
               setActiveWorkspace(ws);
-              setResolvedThreadId(threadId);
+              setResolvedThreadId(threadId || null);
             }
             resolvingRef.current = null;
             return;
@@ -97,7 +102,7 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
         }
       }
       if (!cancelled) {
-        setResolvedThreadId(threadId);
+        setResolvedThreadId(threadId || null);
       }
       resolvingRef.current = null;
     }
@@ -112,6 +117,16 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
     const res = await fetch("/api/workspaces");
     const data = await res.json();
     setWorkspaces(data);
+    const selectedId = searchParams.get("workspaceId");
+    const threadId = params?.threadId as string | undefined;
+    if (selectedId) {
+      const selected = data.find((ws: WorkspaceType) => ws._id === selectedId);
+      if (selected) {
+        setActiveWorkspace(selected);
+      } else if (data.length > 0 && !activeWorkspace && !threadId) {
+        setActiveWorkspace(data[0]);
+      }
+    } else if (data.length > 0 && !activeWorkspace && !threadId) {
     const selectedId = searchParams.get("workspaceId");
     const threadId = params?.threadId as string | undefined;
     if (selectedId) {
@@ -142,6 +157,7 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
     });
     const chat = await res.json();
     setChats((prev) => [chat, ...prev]);
+    router.push(`/chat/${chat._id}?workspaceId=${activeWorkspace._id}`);
     router.push(`/chat/${chat._id}?workspaceId=${activeWorkspace._id}`);
   }
 
@@ -287,6 +303,13 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
                 />
               ) : (
                 <button
+                  onClick={() =>
+                    router.push(
+                      activeWorkspace
+                        ? `/chat/${chat._id}?workspaceId=${activeWorkspace._id}`
+                        : `/chat/${chat._id}`
+                    )
+                  }
                   onClick={() =>
                     router.push(
                       activeWorkspace
