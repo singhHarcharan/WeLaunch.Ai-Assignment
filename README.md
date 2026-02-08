@@ -70,14 +70,23 @@ The app is deployed and intended to be evaluated on:
 
 ## Screenshots
 
-> If images do not render in GitHub, open the links directly.
+Sign In
+![Sign In](outputImages/signin.png)
 
-- **Sign In**: [View](OutputImages/1.%20SignInPage.png)
-- **Sign Up**: [View](OutputImages/2.SignupPage.png)
-- **Home / Workspace Selection**: [View](OutputImages/3.HomePage.png)
-- **Chat History (Persistent)**: [View](OutputImages/4.1.ChatHistoryAcrossSessions.png)
-- **Chat History (Alternate)**: [View](OutputImages/4.2.ChatHistoryAcrossSessions.png)
-- **Web Search Tool Calling**: [View](OutputImages/5.WebSearch.png)
+Sign Up
+![Sign Up](outputImages/signup.png)
+
+Home / Workspace Selection
+![Home](outputImages/home.png)
+
+Chat History (Persistent)
+![Chat History](outputImages/chat-history-1.png)
+
+Chat History (Alternate)
+![Chat History Alt](outputImages/chat-history-2.png)
+
+Web Search Tool Calling
+![Web Search](outputImages/web-search.png)
 
 ---
 
