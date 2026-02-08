@@ -55,11 +55,20 @@ export function ChatBot({ chatId, initialMessages = [] }: Props) {
     e.preventDefault();
     if (!input.trim() || isLoading) return;
     const text = input;
+    const isFirstMessage = messages.length === 0;
     setInput("");
     if (textareaRef.current) {
       textareaRef.current.style.height = "auto";
     }
     await sendMessage({ text });
+    if (isFirstMessage && typeof window !== "undefined") {
+      const title = text.slice(0, 80);
+      window.dispatchEvent(
+        new CustomEvent("chat-title-optimistic", {
+          detail: { chatId, title },
+        })
+      );
+    }
   }
 
   function handleSampleQuestion(q: string) {

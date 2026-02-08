@@ -16,6 +16,7 @@ import {
   FolderOpen,
   Settings,
   User,
+  Home,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -68,6 +69,21 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
       fetchChats(activeWorkspace._id);
     }
   }, [activeWorkspace]);
+
+  useEffect(() => {
+    function handleOptimisticTitle(e: Event) {
+      const detail = (e as CustomEvent<{ chatId: string; title: string }>).detail;
+      if (!detail?.chatId || !detail?.title) return;
+      setChats((prev) =>
+        prev.map((c) => (c._id === detail.chatId ? { ...c, title: detail.title } : c))
+      );
+    }
+
+    window.addEventListener("chat-title-optimistic", handleOptimisticTitle);
+    return () => {
+      window.removeEventListener("chat-title-optimistic", handleOptimisticTitle);
+    };
+  }, []);
 
   useEffect(() => {
     if (workspaces.length === 0) return;
@@ -264,16 +280,27 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
         >
           <PanelLeftClose className="h-4 w-4" />
         </Button>
-        <Button
-          variant="ghost"
-          size="sm"
-          className="h-8 gap-2 px-2 text-sidebar-foreground/80 hover:text-sidebar-foreground"
-          onClick={createChat}
-          title="New chat"
-        >
-          <Pencil className="h-4 w-4" />
-          <span className="text-xs font-medium">New Chat</span>
-        </Button>
+        <div className="flex items-center gap-1">
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-8 w-8 text-sidebar-foreground/70 hover:text-sidebar-foreground"
+            onClick={() => router.push("/chat")}
+            title="Home"
+          >
+            <Home className="h-4 w-4" />
+          </Button>
+          <Button
+            variant="ghost"
+            size="sm"
+            className="h-8 gap-2 px-2 text-sidebar-foreground/80 hover:text-sidebar-foreground"
+            onClick={createChat}
+            title="New chat"
+          >
+            <Pencil className="h-4 w-4" />
+            <span className="text-xs font-medium">New Chat</span>
+          </Button>
+        </div>
       </div>
 
       {/* Workspace Selector */}
@@ -360,14 +387,14 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
                         : `/chat/${chat._id}`
                     )
                   }
-                  className="flex w-full cursor-pointer items-center gap-2 px-3 py-2 text-sm"
+                  className="flex w-full cursor-pointer items-center gap-2 px-3 py-2 pr-12 text-sm"
                 >
                   <MessageSquare className="h-3.5 w-3.5 shrink-0 opacity-60" />
-                  <span className="truncate">{chat.title}</span>
+                  <span className="truncate max-w-[150px] sm:max-w-[160px]">{chat.title}</span>
                 </button>
               )}
               {editingChatId !== chat._id && (
-                <div className="absolute right-1 flex items-center gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
+                <div className="absolute right-1 flex items-center gap-0.5 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 group-focus-within:opacity-100 transition-opacity">
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
