@@ -26,6 +26,13 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { CreateWorkspaceDialog } from "@/components/create-workspace-dialog";
 import { RenameWorkspaceDialog } from "@/components/rename-workspace-dialog";
 import type { WorkspaceType, ChatType } from "@/types/chat";
@@ -46,6 +53,7 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
   const [loading, setLoading] = useState(true);
   const [showCreateWs, setShowCreateWs] = useState(false);
   const [showRenameWs, setShowRenameWs] = useState(false);
+  const [showNoWorkspace, setShowNoWorkspace] = useState(false);
   const [editingChatId, setEditingChatId] = useState<string | null>(null);
   const [editTitle, setEditTitle] = useState("");
   const [resolvedThreadId, setResolvedThreadId] = useState<string | null>(null);
@@ -136,7 +144,10 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
   }
 
   async function createChat() {
-    if (!activeWorkspace) return;
+    if (!activeWorkspace) {
+      setShowNoWorkspace(true);
+      return;
+    }
     const res = await fetch("/api/chats", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -425,6 +436,34 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
         workspace={activeWorkspace}
         onRenamed={handleWorkspaceRenamed}
       />
+      <Dialog open={showNoWorkspace} onOpenChange={setShowNoWorkspace}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Create a workspace first</DialogTitle>
+            <DialogDescription>
+              Chats live inside workspaces. Create one to start a new chat.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="flex gap-2">
+            <Button
+              variant="secondary"
+              className="flex-1"
+              onClick={() => setShowNoWorkspace(false)}
+            >
+              Not now
+            </Button>
+            <Button
+              className="flex-1"
+              onClick={() => {
+                setShowNoWorkspace(false);
+                setShowCreateWs(true);
+              }}
+            >
+              Create Workspace
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
