@@ -320,7 +320,7 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
         <div className="space-y-0.5 py-1">
           {chats.map((chat, i) => (
             <div
-              key={`${chat._id ?? chat.id ?? "chat"}-${i}`}
+              key={`${chat._id ?? "chat"}-${i}`}
               className={`group relative flex items-center rounded-lg transition-colors ${
                 activeThreadId === chat._id
                   ? "bg-sidebar-accent text-sidebar-accent-foreground"
