@@ -86,8 +86,8 @@ const components: Partial<Components> = {
   },
   pre: ({ children }) => {
     // If child is a CodeBlock, render directly
-    const child = React.Children.toArray(children)[0];
-    if (React.isValidElement(child) && child.props.className?.includes("language-")) {
+    const child = React.Children.toArray(children)[0] as React.ReactElement<{ className?: string }> | undefined;
+    if (child?.props?.className?.includes("language-")) {
       return <>{children}</>;
     }
     return (
