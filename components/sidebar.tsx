@@ -27,6 +27,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { CreateWorkspaceDialog } from "@/components/create-workspace-dialog";
+import { RenameWorkspaceDialog } from "@/components/rename-workspace-dialog";
 import type { WorkspaceType, ChatType } from "@/types/chat";
 
 interface SidebarProps {
@@ -44,6 +45,7 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
   const [chats, setChats] = useState<ChatType[]>([]);
   const [loading, setLoading] = useState(true);
   const [showCreateWs, setShowCreateWs] = useState(false);
+  const [showRenameWs, setShowRenameWs] = useState(false);
   const [editingChatId, setEditingChatId] = useState<string | null>(null);
   const [editTitle, setEditTitle] = useState("");
   const [resolvedThreadId, setResolvedThreadId] = useState<string | null>(null);
@@ -172,6 +174,40 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
     setChats([]);
   }
 
+  function handleWorkspaceRenamed(updated: WorkspaceType) {
+    setWorkspaces((prev) =>
+      prev.map((ws) => (ws._id === updated._id ? updated : ws))
+    );
+    if (activeWorkspace?._id === updated._id) {
+      setActiveWorkspace(updated);
+    }
+  }
+
+  async function handleWorkspaceDelete() {
+    if (!activeWorkspace) return;
+    const ok = window.confirm(
+      `Delete workspace \"${activeWorkspace.name}\"? This will remove all chats in it.`
+    );
+    if (!ok) return;
+
+    const res = await fetch(`/api/workspaces?workspaceId=${activeWorkspace._id}`, {
+      method: "DELETE",
+    });
+    if (!res.ok) return;
+
+    setWorkspaces((prev) => prev.filter((ws) => ws._id !== activeWorkspace._id));
+    setChats([]);
+    const remaining = workspaces.filter((ws) => ws._id !== activeWorkspace._id);
+    if (remaining.length > 0) {
+      const nextWs = remaining[0];
+      setActiveWorkspace(nextWs);
+      router.push(`/chat?workspaceId=${nextWs._id}`);
+    } else {
+      setActiveWorkspace(null);
+      router.push("/chat");
+    }
+  }
+
   if (collapsed) {
     return (
       <div className="flex h-full w-[50px] flex-col items-center border-r border-border/50 bg-sidebar/90 backdrop-blur-xl py-3 gap-3">
@@ -219,12 +255,13 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
         </Button>
         <Button
           variant="ghost"
-          size="icon"
-          className="h-8 w-8 text-sidebar-foreground/70 hover:text-sidebar-foreground"
+          size="sm"
+          className="h-8 gap-2 px-2 text-sidebar-foreground/80 hover:text-sidebar-foreground"
           onClick={createChat}
           title="New chat"
         >
           <Pencil className="h-4 w-4" />
+          <span className="text-xs font-medium">New Chat</span>
         </Button>
       </div>
 
@@ -244,7 +281,10 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
             {workspaces.map((ws) => (
               <DropdownMenuItem
                 key={ws._id}
-                onClick={() => setActiveWorkspace(ws)}
+                onClick={() => {
+                  setActiveWorkspace(ws);
+                  router.push(`/chat?workspaceId=${ws._id}`);
+                }}
                 className={activeWorkspace?._id === ws._id ? "bg-accent" : ""}
               >
                 <FolderOpen className="mr-2 h-4 w-4" />
@@ -252,6 +292,21 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
               </DropdownMenuItem>
             ))}
             <DropdownMenuSeparator />
+            <DropdownMenuItem
+              onClick={() => setShowRenameWs(true)}
+              disabled={!activeWorkspace}
+            >
+              <Pencil className="mr-2 h-4 w-4" />
+              Rename Workspace
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={handleWorkspaceDelete}
+              disabled={!activeWorkspace}
+              className="text-destructive focus:text-destructive"
+            >
+              <Trash2 className="mr-2 h-4 w-4" />
+              Delete Workspace
+            </DropdownMenuItem>
             <DropdownMenuItem onClick={() => setShowCreateWs(true)}>
               <Plus className="mr-2 h-4 w-4" />
               New Workspace
@@ -263,9 +318,9 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
       {/* Chat List */}
       <ScrollArea className="flex-1 px-2">
         <div className="space-y-0.5 py-1">
-          {chats.map((chat) => (
+          {chats.map((chat, i) => (
             <div
-              key={chat._id}
+              key={`${chat._id ?? chat.id ?? "chat"}-${i}`}
               className={`group relative flex items-center rounded-lg transition-colors ${
                 activeThreadId === chat._id
                   ? "bg-sidebar-accent text-sidebar-accent-foreground"
@@ -363,6 +418,12 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
         open={showCreateWs}
         onOpenChange={setShowCreateWs}
         onCreated={handleWorkspaceCreated}
+      />
+      <RenameWorkspaceDialog
+        open={showRenameWs}
+        onOpenChange={setShowRenameWs}
+        workspace={activeWorkspace}
+        onRenamed={handleWorkspaceRenamed}
       />
     </div>
   );

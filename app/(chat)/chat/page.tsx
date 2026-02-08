@@ -2,9 +2,10 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Plus, FolderOpen, Loader2, Sparkles } from "lucide-react";
+import { Plus, FolderOpen, Loader2, Sparkles, Pencil, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { CreateWorkspaceDialog } from "@/components/create-workspace-dialog";
+import { RenameWorkspaceDialog } from "@/components/rename-workspace-dialog";
 import { WorkspaceType } from "@/types/chat";
 
 export default function ChatHomePage() {
@@ -12,6 +13,26 @@ export default function ChatHomePage() {
   const [workspaces, setWorkspaces] = useState<WorkspaceType[]>([]);
   const [loading, setLoading] = useState(true);
   const [showCreate, setShowCreate] = useState(false);
+  const [showRename, setShowRename] = useState(false);
+  const [selectedWorkspace, setSelectedWorkspace] = useState<WorkspaceType | null>(null);
+
+  async function handleDeleteWorkspace(ws: WorkspaceType) {
+    const ok = window.confirm(
+      `Delete workspace \"${ws.name}\"? This will remove all chats in it.`
+    );
+    if (!ok) return;
+
+    const res = await fetch(`/api/workspaces?workspaceId=${ws._id}`, {
+      method: "DELETE",
+    });
+    if (!res.ok) return;
+
+    setWorkspaces((prev) => prev.filter((w) => w._id !== ws._id));
+    if (selectedWorkspace?._id === ws._id) {
+      setSelectedWorkspace(null);
+      setShowRename(false);
+    }
+  }
 
   useEffect(() => {
     fetch("/api/workspaces")
@@ -36,9 +57,15 @@ export default function ChatHomePage() {
         <Sparkles className="h-7 w-7 text-primary" />
       </div>
       <h1 className="text-2xl font-semibold mb-1">Welcome to AI Chat</h1>
-      <p className="text-sm text-muted-foreground mb-8">
+      <p className="text-sm text-muted-foreground mb-4">
         Select a chat from the sidebar or create a new workspace
       </p>
+      {workspaces.length > 0 && (
+        <Button onClick={() => setShowCreate(true)} size="sm" className="rounded-xl mb-6">
+          <Plus className="mr-2 h-4 w-4" />
+          New Workspace
+        </Button>
+      )}
 
       {workspaces.length === 0 ? (
         <div className="text-center">
@@ -53,19 +80,44 @@ export default function ChatHomePage() {
       ) : (
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 w-full max-w-2xl">
           {workspaces.map((ws) => (
-            <button
+            <div
               key={ws._id}
-              onClick={() => router.push(`/chat?workspaceId=${ws._id}`)}
-              className="rounded-2xl border border-border/60 bg-card/80 p-4 text-left text-card-foreground shadow-sm transition-all hover:border-border hover:shadow-md cursor-pointer"
+              className="relative rounded-2xl border border-border/60 bg-card/80 p-4 text-left text-card-foreground shadow-sm transition-all hover:border-border hover:shadow-md"
             >
-              <div className="flex items-center gap-2 mb-1">
-                <FolderOpen className="h-4 w-4 text-muted-foreground" />
-                <span className="font-medium text-sm">{ws.name}</span>
-              </div>
-              <p className="text-xs text-muted-foreground">
-                Created {new Date(ws.createdAt).toLocaleDateString()}
-              </p>
-            </button>
+              <button
+                onClick={() => router.push(`/chat?workspaceId=${ws._id}`)}
+                className="w-full cursor-pointer text-left"
+              >
+                <div className="flex items-center gap-2 mb-1">
+                  <FolderOpen className="h-4 w-4 text-muted-foreground" />
+                  <span className="font-medium text-sm">{ws.name}</span>
+                </div>
+                <p className="text-xs text-muted-foreground">
+                  Created {new Date(ws.createdAt).toLocaleDateString()}
+                </p>
+              </button>
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setSelectedWorkspace(ws);
+                  setShowRename(true);
+                }}
+                className="absolute right-3 top-3 rounded-md p-1 text-muted-foreground hover:text-foreground hover:bg-muted/50 cursor-pointer"
+                title="Rename workspace"
+              >
+                <Pencil className="h-3.5 w-3.5" />
+              </button>
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleDeleteWorkspace(ws);
+                }}
+                className="absolute right-10 top-3 rounded-md p-1 text-muted-foreground hover:text-destructive hover:bg-destructive/10 cursor-pointer"
+                title="Delete workspace"
+              >
+                <Trash2 className="h-3.5 w-3.5" />
+              </button>
+            </div>
           ))}
         </div>
       )}
@@ -74,6 +126,15 @@ export default function ChatHomePage() {
         open={showCreate}
         onOpenChange={setShowCreate}
         onCreated={(ws) => setWorkspaces((prev) => [ws, ...prev])}
+      />
+      <RenameWorkspaceDialog
+        open={showRename}
+        onOpenChange={setShowRename}
+        workspace={selectedWorkspace}
+        onRenamed={(ws) => {
+          setWorkspaces((prev) => prev.map((w) => (w._id === ws._id ? ws : w)));
+          setSelectedWorkspace(ws);
+        }}
       />
     </div>
   );
