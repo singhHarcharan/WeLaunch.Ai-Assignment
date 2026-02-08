@@ -65,15 +65,15 @@ export default function SignupPage() {
     <div className="flex min-h-screen items-center justify-center bg-background/80 px-4">
       <div className="w-full max-w-md space-y-8">
         <div className="text-center">
-          <h1 className="text-3xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50">
+          <h1 className="text-3xl font-bold tracking-tight text-foreground">
             Create an account
           </h1>
-          <p className="mt-2 text-sm text-zinc-600 dark:text-zinc-400">
+          <p className="mt-2 text-sm text-muted-foreground">
             Get started with AI Web Chat
           </p>
         </div>
 
-        <div className="rounded-2xl border border-border/60 bg-card/80 p-8 shadow-xl ring-1 ring-border/40 backdrop-blur">
+        <div className="rounded-2xl border border-border/60 bg-card/90 p-8 shadow-xl ring-1 ring-border/40 backdrop-blur">
           <button
             onClick={() => signIn("google", { callbackUrl: "/" })}
             className="flex w-full cursor-pointer items-center justify-center gap-3 rounded-lg border border-border/60 bg-background px-4 py-3 text-sm font-medium text-foreground/80 transition-colors hover:bg-accent"
@@ -104,7 +104,7 @@ export default function SignupPage() {
               <div className="w-full border-t border-zinc-200 dark:border-zinc-700" />
             </div>
             <div className="relative flex justify-center text-sm">
-              <span className="bg-card/80 px-2 text-zinc-500 dark:bg-zinc-900 dark:text-zinc-400">
+              <span className="bg-card/90 px-2 text-muted-foreground">
                 or continue with email
               </span>
             </div>
@@ -120,7 +120,7 @@ export default function SignupPage() {
             <div>
               <label
                 htmlFor="name"
-                className="block text-sm font-medium text-zinc-700 dark:text-zinc-300"
+                className="block text-sm font-medium text-foreground/80"
               >
                 Name
               </label>
@@ -130,7 +130,7 @@ export default function SignupPage() {
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 required
-                className="mt-1 block w-full rounded-lg border border-zinc-300 bg-white px-4 py-3 text-sm text-zinc-900 placeholder-zinc-400 focus:border-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100 dark:placeholder-zinc-500 dark:focus:border-zinc-400 dark:focus:ring-zinc-400"
+                className="mt-1 block w-full rounded-lg border border-border/70 bg-background px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground focus:border-ring focus:outline-none focus:ring-2 focus:ring-ring/20"
                 placeholder="John Doe"
               />
             </div>
@@ -138,7 +138,7 @@ export default function SignupPage() {
             <div>
               <label
                 htmlFor="email"
-                className="block text-sm font-medium text-zinc-700 dark:text-zinc-300"
+                className="block text-sm font-medium text-foreground/80"
               >
                 Email
               </label>
@@ -148,7 +148,7 @@ export default function SignupPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                className="mt-1 block w-full rounded-lg border border-zinc-300 bg-white px-4 py-3 text-sm text-zinc-900 placeholder-zinc-400 focus:border-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100 dark:placeholder-zinc-500 dark:focus:border-zinc-400 dark:focus:ring-zinc-400"
+                className="mt-1 block w-full rounded-lg border border-border/70 bg-background px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground focus:border-ring focus:outline-none focus:ring-2 focus:ring-ring/20"
                 placeholder="you@example.com"
               />
             </div>
@@ -156,7 +156,7 @@ export default function SignupPage() {
             <div>
               <label
                 htmlFor="password"
-                className="block text-sm font-medium text-zinc-700 dark:text-zinc-300"
+                className="block text-sm font-medium text-foreground/80"
               >
                 Password
               </label>
@@ -166,7 +166,7 @@ export default function SignupPage() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
-                className="mt-1 block w-full rounded-lg border border-zinc-300 bg-white px-4 py-3 text-sm text-zinc-900 placeholder-zinc-400 focus:border-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100 dark:placeholder-zinc-500 dark:focus:border-zinc-400 dark:focus:ring-zinc-400"
+                className="mt-1 block w-full rounded-lg border border-border/70 bg-background px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground focus:border-ring focus:outline-none focus:ring-2 focus:ring-ring/20"
                 placeholder="••••••••"
               />
             </div>
@@ -174,7 +174,7 @@ export default function SignupPage() {
             <div>
               <label
                 htmlFor="confirmPassword"
-                className="block text-sm font-medium text-zinc-700 dark:text-zinc-300"
+                className="block text-sm font-medium text-foreground/80"
               >
                 Confirm Password
               </label>
@@ -184,7 +184,7 @@ export default function SignupPage() {
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 required
-                className="mt-1 block w-full rounded-lg border border-zinc-300 bg-white px-4 py-3 text-sm text-zinc-900 placeholder-zinc-400 focus:border-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100 dark:placeholder-zinc-500 dark:focus:border-zinc-400 dark:focus:ring-zinc-400"
+                className="mt-1 block w-full rounded-lg border border-border/70 bg-background px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground focus:border-ring focus:outline-none focus:ring-2 focus:ring-ring/20"
                 placeholder="••••••••"
               />
             </div>
@@ -198,11 +198,11 @@ export default function SignupPage() {
             </button>
           </form>
 
-          <p className="mt-6 text-center text-sm text-zinc-600 dark:text-zinc-400">
+          <p className="mt-6 text-center text-sm text-muted-foreground">
             Already have an account?{" "}
             <Link
               href="/login"
-              className="font-medium cursor-pointer text-zinc-900 hover:underline dark:text-zinc-50"
+              className="font-medium cursor-pointer text-foreground hover:underline"
             >
               Sign in
             </Link>

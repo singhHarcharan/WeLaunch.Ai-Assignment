@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useRouter, useParams } from "next/navigation";
+import { useEffect, useRef, useState } from "react";
+import { useRouter, useParams, useSearchParams } from "next/navigation";
 import { signOut, useSession } from "next-auth/react";
 import {
   Plus,
@@ -37,6 +37,7 @@ interface SidebarProps {
 export function Sidebar({ collapsed, onToggle }: SidebarProps) {
   const router = useRouter();
   const params = useParams();
+  const searchParams = useSearchParams();
   const { data: session } = useSession();
   const [workspaces, setWorkspaces] = useState<WorkspaceType[]>([]);
   const [activeWorkspace, setActiveWorkspace] = useState<WorkspaceType | null>(null);
@@ -45,6 +46,8 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
   const [showCreateWs, setShowCreateWs] = useState(false);
   const [editingChatId, setEditingChatId] = useState<string | null>(null);
   const [editTitle, setEditTitle] = useState("");
+  const [resolvedThreadId, setResolvedThreadId] = useState<string | null>(null);
+  const resolvingRef = useRef<string | null>(null);
 
   useEffect(() => {
     fetchWorkspaces();
@@ -56,11 +59,69 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
     }
   }, [activeWorkspace]);
 
+  useEffect(() => {
+    if (workspaces.length === 0) return;
+    const selectedId = searchParams.get("workspaceId");
+    if (!selectedId) return;
+    const selected = workspaces.find((ws) => ws._id === selectedId);
+    if (selected && selected._id !== activeWorkspace?._id) {
+      setActiveWorkspace(selected);
+    }
+  }, [searchParams, workspaces, activeWorkspace]);
+
+  useEffect(() => {
+    const threadId = params?.threadId as string | undefined;
+    if (!threadId || workspaces.length === 0) return;
+    if (resolvedThreadId === threadId) return;
+    if (resolvingRef.current === threadId) return;
+    resolvingRef.current = threadId;
+
+    let cancelled = false;
+    async function resolveWorkspaceFromThread() {
+      for (const ws of workspaces) {
+        try {
+          const res = await fetch(`/api/chats?workspaceId=${ws._id}`);
+          if (!res.ok) continue;
+          const data = await res.json();
+          const match = data.find((c: ChatType) => c._id === threadId);
+          if (match) {
+            if (!cancelled) {
+              setActiveWorkspace(ws);
+              setResolvedThreadId(threadId);
+            }
+            resolvingRef.current = null;
+            return;
+          }
+        } catch {
+          // ignore and continue
+        }
+      }
+      if (!cancelled) {
+        setResolvedThreadId(threadId);
+      }
+      resolvingRef.current = null;
+    }
+
+    resolveWorkspaceFromThread();
+    return () => {
+      cancelled = true;
+    };
+  }, [params, workspaces, resolvedThreadId]);
+
   async function fetchWorkspaces() {
     const res = await fetch("/api/workspaces");
     const data = await res.json();
     setWorkspaces(data);
-    if (data.length > 0 && !activeWorkspace) {
+    const selectedId = searchParams.get("workspaceId");
+    const threadId = params?.threadId as string | undefined;
+    if (selectedId) {
+      const selected = data.find((ws: WorkspaceType) => ws._id === selectedId);
+      if (selected) {
+        setActiveWorkspace(selected);
+      } else if (data.length > 0 && !activeWorkspace && !threadId) {
+        setActiveWorkspace(data[0]);
+      }
+    } else if (data.length > 0 && !activeWorkspace && !threadId) {
       setActiveWorkspace(data[0]);
     }
     setLoading(false);
@@ -81,7 +142,7 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
     });
     const chat = await res.json();
     setChats((prev) => [chat, ...prev]);
-    router.push(`/chat/${chat._id}`);
+    router.push(`/chat/${chat._id}?workspaceId=${activeWorkspace._id}`);
   }
 
   async function deleteChat(chatId: string) {
@@ -226,7 +287,13 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
                 />
               ) : (
                 <button
-                  onClick={() => router.push(`/chat/${chat._id}`)}
+                  onClick={() =>
+                    router.push(
+                      activeWorkspace
+                        ? `/chat/${chat._id}?workspaceId=${activeWorkspace._id}`
+                        : `/chat/${chat._id}`
+                    )
+                  }
                   className="flex w-full cursor-pointer items-center gap-2 px-3 py-2 text-sm"
                 >
                   <MessageSquare className="h-3.5 w-3.5 shrink-0 opacity-60" />

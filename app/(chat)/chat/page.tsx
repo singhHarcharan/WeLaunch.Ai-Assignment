@@ -1,12 +1,14 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { Plus, FolderOpen, Loader2, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { CreateWorkspaceDialog } from "@/components/create-workspace-dialog";
 import { WorkspaceType } from "@/types/chat";
 
 export default function ChatHomePage() {
+  const router = useRouter();
   const [workspaces, setWorkspaces] = useState<WorkspaceType[]>([]);
   const [loading, setLoading] = useState(true);
   const [showCreate, setShowCreate] = useState(false);
@@ -51,9 +53,10 @@ export default function ChatHomePage() {
       ) : (
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 w-full max-w-2xl">
           {workspaces.map((ws) => (
-            <div
+            <button
               key={ws._id}
-              className="rounded-2xl border border-border/60 bg-card/80 p-4 text-card-foreground shadow-sm transition-all hover:border-border hover:shadow-md"
+              onClick={() => router.push(`/chat?workspaceId=${ws._id}`)}
+              className="rounded-2xl border border-border/60 bg-card/80 p-4 text-left text-card-foreground shadow-sm transition-all hover:border-border hover:shadow-md cursor-pointer"
             >
               <div className="flex items-center gap-2 mb-1">
                 <FolderOpen className="h-4 w-4 text-muted-foreground" />
@@ -62,7 +65,7 @@ export default function ChatHomePage() {
               <p className="text-xs text-muted-foreground">
                 Created {new Date(ws.createdAt).toLocaleDateString()}
               </p>
-            </div>
+            </button>
           ))}
         </div>
       )}

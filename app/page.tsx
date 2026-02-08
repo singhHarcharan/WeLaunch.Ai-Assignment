@@ -20,7 +20,15 @@
 //     </div>
 //   );
 // }
+import { redirect } from "next/navigation";
+import { auth } from "@/auth";
 
-export default function Home() {
-  return <div>Home</div>;
+export default async function Home() {
+  const session = await auth();
+
+  if (session?.user) {
+    redirect("/chat");
+  } else {
+    redirect("/login");
+  }
 }

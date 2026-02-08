@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import { SessionProvider } from "next-auth/react";
+import AuthProvider from "./components/SessionProvider";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -14,11 +14,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "WeLaunch.AI Chat",
-  description: "AI-powered chat application with workspaces",
-  icons: {
-    icon: "/chat.png",
-  },
+  title: "AI Web Chat",
+  description: "AI-powered web chat application",
 };
 
 export default function RootLayout({
@@ -27,13 +24,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en" className="dark">
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <SessionProvider>
-          {children}
-        </SessionProvider>
+        <AuthProvider>{children}</AuthProvider>
       </body>
     </html>
   );
