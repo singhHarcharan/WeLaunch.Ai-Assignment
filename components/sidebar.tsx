@@ -113,7 +113,7 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
 
   if (collapsed) {
     return (
-      <div className="flex h-full w-[50px] flex-col items-center border-r border-border/50 bg-sidebar py-3 gap-3">
+      <div className="flex h-full w-[50px] flex-col items-center border-r border-border/50 bg-sidebar/90 backdrop-blur-xl py-3 gap-3">
         <Button
           variant="ghost"
           size="icon"
@@ -145,7 +145,7 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
   const activeThreadId = params?.threadId as string | undefined;
 
   return (
-    <div className="flex h-full w-[260px] flex-col border-r border-border/50 bg-sidebar">
+    <div className="flex h-full w-[260px] flex-col border-r border-border/50 bg-sidebar/90 backdrop-blur-xl">
       {/* Header */}
       <div className="flex items-center justify-between px-3 py-3">
         <Button
@@ -170,15 +170,15 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
       {/* Workspace Selector */}
       <div className="px-3 pb-2">
         <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <button className="flex w-full items-center gap-2 rounded-lg px-2 py-1.5 text-sm font-medium text-sidebar-foreground hover:bg-sidebar-accent transition-colors">
+        <DropdownMenuTrigger asChild>
+            <button className="flex w-full cursor-pointer items-center gap-2 rounded-lg px-2 py-1.5 text-sm font-medium text-sidebar-foreground hover:bg-sidebar-accent transition-colors">
               <FolderOpen className="h-4 w-4 text-sidebar-foreground/60" />
               <span className="flex-1 truncate text-left">
                 {activeWorkspace?.name || "Select workspace"}
               </span>
               <ChevronDown className="h-3 w-3 text-sidebar-foreground/40" />
             </button>
-          </DropdownMenuTrigger>
+        </DropdownMenuTrigger>
           <DropdownMenuContent align="start" className="w-[232px]">
             {workspaces.map((ws) => (
               <DropdownMenuItem
@@ -227,7 +227,7 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
               ) : (
                 <button
                   onClick={() => router.push(`/chat/${chat._id}`)}
-                  className="flex w-full items-center gap-2 px-3 py-2 text-sm"
+                  className="flex w-full cursor-pointer items-center gap-2 px-3 py-2 text-sm"
                 >
                   <MessageSquare className="h-3.5 w-3.5 shrink-0 opacity-60" />
                   <span className="truncate">{chat.title}</span>
@@ -241,7 +241,7 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
                       setEditingChatId(chat._id);
                       setEditTitle(chat.title);
                     }}
-                    className="rounded p-1 hover:bg-sidebar-accent"
+                    className="rounded p-1 hover:bg-sidebar-accent cursor-pointer"
                   >
                     <Pencil className="h-3 w-3" />
                   </button>
@@ -250,7 +250,7 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
                       e.stopPropagation();
                       deleteChat(chat._id);
                     }}
-                    className="rounded p-1 hover:bg-destructive/20 hover:text-destructive"
+                    className="rounded p-1 hover:bg-destructive/20 hover:text-destructive cursor-pointer"
                   >
                     <Trash2 className="h-3 w-3" />
                   </button>
@@ -269,11 +269,11 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
       {/* User Section */}
       <div className="border-t border-border/50 p-2">
         <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <button className="flex w-full items-center gap-2 rounded-lg px-2 py-2 text-sm text-sidebar-foreground/80 hover:bg-sidebar-accent transition-colors">
-              <div className="flex h-7 w-7 items-center justify-center rounded-full bg-primary/10 text-primary">
-                <User className="h-3.5 w-3.5" />
-              </div>
+        <DropdownMenuTrigger asChild>
+          <button className="flex w-full cursor-pointer items-center gap-2 rounded-lg px-2 py-2 text-sm text-sidebar-foreground/80 hover:bg-sidebar-accent transition-colors">
+            <div className="flex h-7 w-7 items-center justify-center rounded-full bg-primary/10 text-primary">
+              <User className="h-3.5 w-3.5" />
+            </div>
               <span className="flex-1 truncate text-left text-xs font-medium">
                 {session?.user?.name || session?.user?.email || "User"}
               </span>

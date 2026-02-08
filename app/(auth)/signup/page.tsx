@@ -62,7 +62,7 @@ export default function SignupPage() {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 dark:bg-zinc-950 px-4">
+    <div className="flex min-h-screen items-center justify-center bg-background/80 px-4">
       <div className="w-full max-w-md space-y-8">
         <div className="text-center">
           <h1 className="text-3xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50">
@@ -73,10 +73,10 @@ export default function SignupPage() {
           </p>
         </div>
 
-        <div className="rounded-xl border border-zinc-200 bg-white p-8 shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
+        <div className="rounded-2xl border border-border/60 bg-card/80 p-8 shadow-xl ring-1 ring-border/40 backdrop-blur">
           <button
             onClick={() => signIn("google", { callbackUrl: "/" })}
-            className="flex w-full items-center justify-center gap-3 rounded-lg border border-zinc-300 bg-white px-4 py-3 text-sm font-medium text-zinc-700 transition-colors hover:bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-300 dark:hover:bg-zinc-750"
+            className="flex w-full cursor-pointer items-center justify-center gap-3 rounded-lg border border-border/60 bg-background px-4 py-3 text-sm font-medium text-foreground/80 transition-colors hover:bg-accent"
           >
             <svg className="h-5 w-5" viewBox="0 0 24 24">
               <path
@@ -104,7 +104,7 @@ export default function SignupPage() {
               <div className="w-full border-t border-zinc-200 dark:border-zinc-700" />
             </div>
             <div className="relative flex justify-center text-sm">
-              <span className="bg-white px-2 text-zinc-500 dark:bg-zinc-900 dark:text-zinc-400">
+              <span className="bg-card/80 px-2 text-zinc-500 dark:bg-zinc-900 dark:text-zinc-400">
                 or continue with email
               </span>
             </div>
@@ -192,7 +192,7 @@ export default function SignupPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full rounded-lg bg-zinc-900 px-4 py-3 text-sm font-medium text-white transition-colors hover:bg-zinc-800 disabled:opacity-50 dark:bg-zinc-50 dark:text-zinc-900 dark:hover:bg-zinc-200"
+              className="w-full cursor-pointer rounded-lg bg-primary px-4 py-3 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90 disabled:opacity-50"
             >
               {loading ? "Creating account..." : "Create account"}
             </button>
@@ -202,7 +202,7 @@ export default function SignupPage() {
             Already have an account?{" "}
             <Link
               href="/login"
-              className="font-medium text-zinc-900 hover:underline dark:text-zinc-50"
+              className="font-medium cursor-pointer text-zinc-900 hover:underline dark:text-zinc-50"
             >
               Sign in
             </Link>

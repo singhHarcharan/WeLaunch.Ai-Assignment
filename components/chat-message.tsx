@@ -29,7 +29,7 @@ export function ChatMessage({ message }: Props) {
   if (isUser) {
     return (
       <div className="flex justify-end">
-        <div className="max-w-[80%] rounded-2xl bg-primary px-4 py-2.5 text-sm text-primary-foreground">
+        <div className="max-w-[80%] rounded-2xl bg-primary px-4 py-2.5 text-sm text-primary-foreground shadow-sm">
           {message.parts?.map((part, i) => {
             if (part.type === "text") {
               return <span key={i}>{part.text}</span>;
@@ -80,7 +80,7 @@ export function ChatMessage({ message }: Props) {
         <div className="flex items-center gap-1 mt-2 opacity-0 group-hover:opacity-100 transition-opacity">
           <button
             onClick={copyContent}
-            className="rounded-md p-1 text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+            className="rounded-md p-1 cursor-pointer text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
             title="Copy"
           >
             {copied ? (

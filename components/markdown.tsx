@@ -24,7 +24,7 @@ function CodeBlock({ className, children }: { className?: string; children: Reac
         <span className="text-xs font-medium text-muted-foreground">{lang || "code"}</span>
         <button
           onClick={handleCopy}
-          className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors"
+          className="flex items-center gap-1.5 cursor-pointer text-xs text-muted-foreground hover:text-foreground transition-colors"
         >
           {copied ? <Check className="h-3 w-3 text-green-500" /> : <Copy className="h-3 w-3" />}
           {copied ? "Copied" : "Copy"}
@@ -98,7 +98,7 @@ const components: Partial<Components> = {
   },
   a: ({ children, href, ...props }) => (
     <a
-      className="inline-flex items-center gap-1 text-primary hover:underline transition-colors"
+      className="inline-flex items-center gap-1 cursor-pointer text-primary hover:underline transition-colors"
       href={href}
       target="_blank"
       rel="noopener noreferrer"

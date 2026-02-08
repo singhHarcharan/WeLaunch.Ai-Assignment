@@ -95,7 +95,7 @@ export function ChatBot({ chatId, initialMessages = [] }: Props) {
                   <button
                     key={q}
                     onClick={() => handleSampleQuestion(q)}
-                    className="rounded-xl border border-border/60 bg-card p-3.5 text-left text-sm text-foreground/80 transition-all hover:bg-accent hover:border-border hover:shadow-sm"
+                    className="cursor-pointer rounded-xl border border-border/60 bg-card/80 p-3.5 text-left text-sm text-foreground/80 transition-all hover:bg-accent hover:border-border hover:shadow-sm"
                   >
                     {q}
                   </button>
@@ -130,7 +130,7 @@ export function ChatBot({ chatId, initialMessages = [] }: Props) {
       <div className="border-t border-border/40 bg-background/80 backdrop-blur-xl">
         <div className="mx-auto max-w-3xl px-4 py-3">
           <form onSubmit={handleSubmit} className="relative">
-            <div className="flex items-end rounded-2xl border border-border/60 bg-muted/30 transition-colors focus-within:border-border focus-within:bg-muted/50">
+            <div className="flex items-end rounded-2xl border border-border/60 bg-muted/30 shadow-sm transition-colors focus-within:border-border focus-within:bg-muted/50">
               <textarea
                 ref={textareaRef}
                 value={input}
@@ -145,7 +145,7 @@ export function ChatBot({ chatId, initialMessages = [] }: Props) {
                 <button
                   type="submit"
                   disabled={isLoading || !input.trim()}
-                  className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground transition-all hover:bg-primary/90 disabled:opacity-30 disabled:hover:bg-primary"
+                  className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-lg bg-primary text-primary-foreground transition-all hover:bg-primary/90 disabled:opacity-30 disabled:hover:bg-primary"
                 >
                   <ArrowUp className="h-4 w-4" />
                 </button>

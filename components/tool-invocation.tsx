@@ -59,7 +59,7 @@ export function ToolInvocation({ toolInvocation }: Props) {
     <div className="my-3 overflow-hidden rounded-xl border border-border/50 bg-muted/20">
       <button
         onClick={() => isDone && setExpanded(!expanded)}
-        className="flex w-full items-center gap-2.5 px-3.5 py-2.5 text-sm"
+        className="flex w-full items-center gap-2.5 px-3.5 py-2.5 text-sm cursor-pointer"
       >
         {isWebSearch ? (
           <Globe className="h-4 w-4 text-blue-400 shrink-0" />

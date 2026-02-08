@@ -29,7 +29,7 @@ export default function ChatHomePage() {
   }
 
   return (
-    <div className="flex h-full flex-col items-center justify-center p-8">
+    <div className="flex h-full flex-col items-center justify-center p-8 text-center">
       <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-primary/20 to-primary/5 mb-6">
         <Sparkles className="h-7 w-7 text-primary" />
       </div>
@@ -53,7 +53,7 @@ export default function ChatHomePage() {
           {workspaces.map((ws) => (
             <div
               key={ws._id}
-              className="rounded-xl border border-border/60 bg-card p-4 text-card-foreground transition-all hover:border-border hover:shadow-sm"
+              className="rounded-2xl border border-border/60 bg-card/80 p-4 text-card-foreground shadow-sm transition-all hover:border-border hover:shadow-md"
             >
               <div className="flex items-center gap-2 mb-1">
                 <FolderOpen className="h-4 w-4 text-muted-foreground" />
