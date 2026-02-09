@@ -125,7 +125,10 @@ export default function ChatHomePage() {
       <CreateWorkspaceDialog
         open={showCreate}
         onOpenChange={setShowCreate}
-        onCreated={(ws) => setWorkspaces((prev) => [ws, ...prev])}
+        onCreated={(ws) => {
+          setWorkspaces((prev) => [ws, ...prev]);
+          router.push(`/chat?workspaceId=${ws._id}`);
+        }}
       />
       <RenameWorkspaceDialog
         open={showRename}

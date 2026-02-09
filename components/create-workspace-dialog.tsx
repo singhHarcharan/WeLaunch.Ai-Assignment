@@ -36,6 +36,13 @@ export function CreateWorkspaceDialog({ open, onOpenChange, onCreated }: Props) 
     setName("");
     onOpenChange(false);
     onCreated(ws);
+    if (typeof window !== "undefined") {
+      window.dispatchEvent(
+        new CustomEvent("workspace-created", {
+          detail: { workspace: ws },
+        })
+      );
+    }
   }
 
   return (

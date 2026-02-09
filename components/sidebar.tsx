@@ -86,6 +86,24 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
   }, []);
 
   useEffect(() => {
+    function handleWorkspaceCreatedEvent(e: Event) {
+      const detail = (e as CustomEvent<{ workspace: WorkspaceType }>).detail;
+      if (!detail?.workspace) return;
+      setWorkspaces((prev) => {
+        const exists = prev.some((w) => w._id === detail.workspace._id);
+        return exists ? prev : [detail.workspace, ...prev];
+      });
+      setActiveWorkspace(detail.workspace);
+      setChats([]);
+    }
+
+    window.addEventListener("workspace-created", handleWorkspaceCreatedEvent);
+    return () => {
+      window.removeEventListener("workspace-created", handleWorkspaceCreatedEvent);
+    };
+  }, []);
+
+  useEffect(() => {
     if (workspaces.length === 0) return;
     const selectedId = searchParams.get("workspaceId");
     if (!selectedId) return;
@@ -199,6 +217,7 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
     setWorkspaces((prev) => [ws, ...prev]);
     setActiveWorkspace(ws);
     setChats([]);
+    router.push(`/chat?workspaceId=${ws._id}`);
   }
 
   function handleWorkspaceRenamed(updated: WorkspaceType) {
