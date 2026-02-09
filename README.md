@@ -110,7 +110,7 @@ Web Search Tool Calling
 **AI + Agents**
 - OpenRouter (via `@langchain/openai`)
 - LangChain + LangGraph
-- Exa search API for web search
+- Tavily search API for web search
 
 ---
 
@@ -139,7 +139,7 @@ Web Search Tool Calling
           ▼
 ┌──────────────────────────┐
 │ LangGraph Agent + Tools   │
-│ OpenRouter + Exa Search   │
+│ OpenRouter + Tavily Search│
 └──────────────────────────┘
 ```
 
@@ -170,7 +170,7 @@ Web Search Tool Calling
 
 ### 5.5 Tool Calling
 1. Agent calls `web_search`
-2. Exa returns structured results
+2. Tavily returns structured results
 3. UI shows a tool card with results
 
 ---
@@ -220,7 +220,7 @@ MONGODB_URI=mongodb+srv://...
 
 # AI Providers
 OPENROUTER_API_KEY=sk-or-...
-EXA_API_KEY=exa_...
+TAVILY_API_KEY=tavily_...
 ```
 
 Notes:
@@ -276,7 +276,7 @@ On Vercel:
 - Ensure `useChat` uses `initialMessages`, not `messages`
 
 **Web search results empty**
-- Confirm Exa API key
+- Confirm Tavily API key
 - Ensure tool returns structured `{ results[] }`
 
 ---
