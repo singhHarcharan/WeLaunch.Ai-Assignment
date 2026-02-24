@@ -15,7 +15,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "AI Web Chat",
+  title: "Ping Ai",
   description: "AI-powered web chat application",
 };
 
