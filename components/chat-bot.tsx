@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useChat } from "@ai-sdk/react";
 import { DefaultChatTransport } from "ai";
 import { Loader2, Sparkles, ArrowUp } from "lucide-react";
@@ -10,6 +10,25 @@ import type { UIMessage } from "ai";
 interface Props {
   chatId: string;
   initialMessages?: UIMessage[];
+}
+
+function toUserFriendlyError(message: string) {
+  const text = message.toLowerCase();
+
+  if (
+    text.includes("model_authentication") ||
+    text.includes("401 user not found") ||
+    text.includes("incorrect api key") ||
+    text.includes("invalid api key")
+  ) {
+    return "Something is up with the model provider we're using right now. Please try again shortly.";
+  }
+
+  if (text.includes("rate limit") || text.includes("429")) {
+    return "The model provider is rate-limiting requests right now. Please try again in a moment.";
+  }
+
+  return "The model request failed. Please try again.";
 }
 
 const sampleQuestions = [
@@ -22,18 +41,24 @@ const sampleQuestions = [
 export function ChatBot({ chatId, initialMessages = [] }: Props) {
   const scrollRef = useRef<HTMLDivElement>(null);
   const [input, setInput] = useState("");
+  const [chatError, setChatError] = useState<string | null>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
-  const transport = useRef(
-    new DefaultChatTransport({
-      api: "/api/chat",
-      body: { chatId },
-    })
+  const transport = useMemo(
+    () =>
+      new DefaultChatTransport({
+        api: "/api/chat",
+        body: { chatId },
+      }),
+    [chatId]
   );
 
   const { messages, sendMessage, status } = useChat({
-    transport: transport.current,
+    transport,
     messages: initialMessages,
+    onError: (error) => {
+      setChatError(toUserFriendlyError(error.message || "Request failed"));
+    },
   });
 
   const isLoading = status === "streaming" || status === "submitted";
@@ -54,6 +79,7 @@ export function ChatBot({ chatId, initialMessages = [] }: Props) {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!input.trim() || isLoading) return;
+    setChatError(null);
     const text = input;
     const isFirstMessage = messages.length === 0;
     setInput("");
@@ -73,6 +99,7 @@ export function ChatBot({ chatId, initialMessages = [] }: Props) {
 
   function handleSampleQuestion(q: string) {
     if (isLoading) return;
+    setChatError(null);
     sendMessage({ text: q });
   }
 
@@ -113,6 +140,11 @@ export function ChatBot({ chatId, initialMessages = [] }: Props) {
             </div>
           ) : (
             <div className="space-y-6 py-6 pb-32">
+              {chatError ? (
+                <div className="rounded-xl border border-red-500/40 bg-red-500/10 px-3 py-2 text-sm text-red-300">
+                  {chatError}
+                </div>
+              ) : null}
               {messages.map((m) => (
                 <ChatMessage key={m.id} message={m} />
               ))}
